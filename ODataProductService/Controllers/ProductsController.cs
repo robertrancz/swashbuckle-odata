@@ -1,4 +1,5 @@
 ﻿using ODataProductService.Models;
+using Swashbuckle.Swagger.Annotations;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.OData;
+using System.Web.OData.Routing;
 
 namespace ODataProductService.Controllers
 {
@@ -14,13 +16,18 @@ namespace ODataProductService.Controllers
         ProductsContext db = new ProductsContext();
 
         #region Get entity/entities
+        [ODataRoute("Products/")]
         [EnableQuery]
+        [SwaggerOperation("GetAll")]
         public IQueryable<Product> Get()
         {
             return db.Products;
         }
 
         [EnableQuery]
+        [SwaggerOperation("GetById")]
+        [SwaggerResponse(HttpStatusCode.OK)]
+        [SwaggerResponse(HttpStatusCode.NotFound, "Product not found.")]
         public SingleResult<Product> Get([FromODataUri] int key)
         {
             IQueryable<Product> result = db.Products.Where(p => p.Id == key);
